@@ -14,7 +14,17 @@
   - [ ] [01 全体地図](./tracks/frontend-ecosystem/01-map.md)
   - [ ] [02 リクエストが画面になるまで](./tracks/frontend-ecosystem/02-request-lifecycle.md)
 
-### 2. Hono
+### 2. TanStack と Next.js
+
+地図の「メタフレームワーク / データ取得 / ルーティング」を、Next.js への不満と対比して具体化する。Query と Start を混ぜない。
+
+- [ ] [tracks/tanstack](./tracks/tanstack/)
+  - [ ] [01 なぜ TanStack か](./tracks/tanstack/01-why-tanstack.md)
+  - [ ] [02 Query とサーバー状態](./tracks/tanstack/02-query-and-server-state.md)
+  - [ ] [03 Router と URL](./tracks/tanstack/03-router-and-url.md)
+  - [ ] [04 Start という枠](./tracks/tanstack/04-start-as-framework.md)
+
+### 3. Hono
 
 地図の「サーバー / HTTP」層を、Web Standards の薄いフレームワークで具体化する。
 
@@ -24,7 +34,7 @@
   - [ ] [03 ルーティング](./tracks/hono/03-routing.md)
   - [ ] [04 ミドルウェア](./tracks/hono/04-middleware.md)
 
-### 3. oRPC
+### 4. oRPC
 
 HTTP の上に「関数呼び出しのように型が通る API」を載せる。Hono と組み合わせるところまでが導入。
 
@@ -33,7 +43,7 @@ HTTP の上に「関数呼び出しのように型が通る API」を載せる�
   - [ ] [02 Procedure と Router](./tracks/orpc/02-procedure-and-router.md)
   - [ ] [03 Client と Hono](./tracks/orpc/03-client-and-hono.md)
 
-### 4. ネットワーク
+### 5. ネットワーク
 
 ここまで使ってきた HTTP の下を見る。Hono の `Context` や Docker のポートが、何の上に乗っているかがわかる。
 
@@ -41,7 +51,7 @@ HTTP の上に「関数呼び出しのように型が通る API」を載せる�
   - [ ] [01 層で見る通信](./tracks/networking/01-layers.md)
   - [ ] [02 HTTP を分解する](./tracks/networking/02-http.md)
 
-### 5. Go
+### 6. Go
 
 同じ「HTTP サーバー」を、JavaScript ではない言語で書く。標準ライブラリの厚さと並行処理の発想が目的。
 
@@ -49,7 +59,7 @@ HTTP の上に「関数呼び出しのように型が通る API」を載せる�
   - [ ] [01 なぜ Go か](./tracks/go/01-why-go.md)
   - [ ] [02 モジュールと最初のサーバー](./tracks/go/02-module-and-http.md)
 
-### 6. Docker
+### 7. Docker
 
 今まで動かしていたプロセスを、再現可能な箱に入れる。
 
@@ -62,7 +72,7 @@ HTTP の上に「関数呼び出しのように型が通る API」を載せる�
 教材としてまだないが、地図の延長にあるもの。
 
 - Hono の Validator と RPC モード（`hc`）
-- oRPC の OpenAPI / contract-first / TanStack Query
+- oRPC の OpenAPI / contract-first / TanStack Query（Query の層は [tanstack](./tracks/tanstack/)）
 - Go の `context`, テスト, モジュール設計
 - Docker Compose、ネットワーク、ボリューム
 - TLS、DNS のキャッシュ、ロードバランサ

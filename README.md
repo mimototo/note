@@ -1,6 +1,6 @@
 # 学習リポジトリ
 
-フロントエンドのエコシステムから、Hono / oRPC、Go、Docker、ネットワークまでを**体系的に学ぶ**ためのリポジトリです。
+フロントエンドのエコシステムから、TanStack / Next.js の比較、Hono / oRPC、Go、Docker、ネットワークまでを**体系的に学ぶ**ためのリポジトリです。
 
 ここは日記やアイデア置き場ではありません。  
 教材は AI が作り、人間が読んで確認する前提です。
@@ -21,6 +21,7 @@
 | トラック | 何を学ぶか |
 | --- | --- |
 | [frontend-ecosystem](./tracks/frontend-ecosystem/) | ランタイム・バンドラ・UI・メタフレームワークの地図 |
+| [tanstack](./tracks/tanstack/) | Query / Router / Start を Next.js と比較して層で切る |
 | [hono](./tracks/hono/) | Web Standards 上の薄い Web フレームワーク |
 | [orpc](./tracks/orpc/) | エンドツーエンドで型安全な API |
 | [networking](./tracks/networking/) | IP / TCP / DNS / HTTP。上の全部の土台 |

@@ -25,7 +25,7 @@
 - OpenAPI Handler と仕様の生成
 - contract-first（`oc`）
 - Middleware / Context / 型付きエラー
-- TanStack Query 連携
+- TanStack Query 連携（Query 側の層は [tanstack](../tanstack/02-query-and-server-state.md)）
 - SSE とストリーミング
 
 ## 公式
