@@ -9,6 +9,7 @@
 
 ## 前提
 
+- 先に [図解 HTML](./illustrated.html) をブラウザで開く（GitHub 上ではソースになる）
 - [トラック概要](./README.md)
 - [全体地図](../frontend-ecosystem/01-map.md) の「メタフレームワーク」と「データ取得」
 

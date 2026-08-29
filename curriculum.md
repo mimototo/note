@@ -19,6 +19,7 @@
 地図の「メタフレームワーク / データ取得 / ルーティング」を、Next.js への不満と対比して具体化する。Query と Start を混ぜない。
 
 - [ ] [tracks/tanstack](./tracks/tanstack/)
+  - [ ] [図解 HTML](./tracks/tanstack/illustrated.html)（ブラウザで開く）
   - [ ] [01 なぜ TanStack か](./tracks/tanstack/01-why-tanstack.md)
   - [ ] [02 Query とサーバー状態](./tracks/tanstack/02-query-and-server-state.md)
   - [ ] [03 Router と URL](./tracks/tanstack/03-router-and-url.md)

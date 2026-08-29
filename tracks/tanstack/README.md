@@ -13,16 +13,18 @@ TanStack は一つのフレームワークではなく、**層ごとに選べる
 
 ## 前提
 
+- 先に [図解 HTML](./illustrated.html) をブラウザで開く（GitHub 上ではソースになる）
 - [フロントエンドの地図](../frontend-ecosystem/01-map.md) の層（UI / メタフレームワーク / データ取得）
 - React のコンポーネントと `fetch` が読める
 - Next.js を本番で使った経験は不要。App Router の話は本文で足りる
 
 ## レッスン
 
-1. [01 なぜ TanStack か](./01-why-tanstack.md) — Next への不満と、ライブラリ群という答え方
-2. [02 Query とサーバー状態](./02-query-and-server-state.md) — フレームワークの `fetch` キャッシュと、明示的なクライアントキャッシュ
-3. [03 Router と URL](./03-router-and-url.md) — App Router の規約と、型の通るルート木
-4. [04 Start という枠](./04-start-as-framework.md) — メタフレームワーク同士。何を捨て、何を残すか
+1. [図解 HTML](./illustrated.html) — ブラウザで層を見る（このファイルを開く）
+2. [01 なぜ TanStack か](./01-why-tanstack.md) — Next への不満と、ライブラリ群という答え方
+3. [02 Query とサーバー状態](./02-query-and-server-state.md) — フレームワークの `fetch` キャッシュと、明示的なクライアントキャッシュ
+4. [03 Router と URL](./03-router-and-url.md) — App Router の規約と、型の通るルート木
+5. [04 Start という枠](./04-start-as-framework.md) — メタフレームワーク同士。何を捨て、何を残すか
 
 ## 予定（未執筆）
 

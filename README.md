@@ -21,7 +21,7 @@
 | トラック | 何を学ぶか |
 | --- | --- |
 | [frontend-ecosystem](./tracks/frontend-ecosystem/) | ランタイム・バンドラ・UI・メタフレームワークの地図 |
-| [tanstack](./tracks/tanstack/) | Query / Router / Start を Next.js と比較して層で切る |
+| [tanstack](./tracks/tanstack/) | Query / Router / Start を Next.js と比較。[図解 HTML](./tracks/tanstack/illustrated.html) から入る |
 | [hono](./tracks/hono/) | Web Standards 上の薄い Web フレームワーク |
 | [orpc](./tracks/orpc/) | エンドツーエンドで型安全な API |
 | [networking](./tracks/networking/) | IP / TCP / DNS / HTTP。上の全部の土台 |
