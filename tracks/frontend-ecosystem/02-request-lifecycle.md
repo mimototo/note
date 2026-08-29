@@ -54,6 +54,7 @@ oRPC や Hono の RPC モードが解決するのは、段階 6 付近である�
 ## 次へ
 
 - 地図はここまで。HTTP をコードにする → [Hono](../hono/)
+- Next と TanStack が 4〜6 をどう畳むか → [TanStack](../tanstack/)
 - この流れの下側を先に見たい → [ネットワーク](../networking/)
 
 ## 公式

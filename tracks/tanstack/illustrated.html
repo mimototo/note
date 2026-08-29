@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>図解: Next.js が隠す境界 / TanStack が名前にする境界</title>
+    <style>
+      :root {
+        --paper: #f3eee4;
+        --ink: #1d1a16;
+        --muted: #5c564c;
+        --line: #d4cbb8;
+        --next: #1e3a5f;
+        --next-soft: #dce6f2;
+        --query: #0f5c57;
+        --query-soft: #d7eeeb;
+        --router: #8a4b12;
+        --router-soft: #f3e1cc;
+        --start: #7a2e24;
+        --start-soft: #f3d9d4;
+        --warn: #7c2d12;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background: var(--paper);
+        font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP",
+          "Yu Gothic", YuGothic, sans-serif;
+        line-height: 1.7;
+      }
+
+      a {
+        color: var(--next);
+      }
+
+      a:hover {
+        text-decoration-thickness: 2px;
+      }
+
+      header.hero {
+        padding: 2.5rem 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--line);
+        background: #efe8d9;
+      }
+
+      .wrap {
+        max-width: 58rem;
+        margin: 0 auto;
+        padding: 0 1.25rem 4rem;
+      }
+
+      header.hero .wrap {
+        padding-bottom: 0;
+      }
+
+      .kicker {
+        display: inline-block;
+        font-size: 0.75rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin: 0 0 0.5rem;
+      }
+
+      h1 {
+        font-family: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif;
+        font-weight: 600;
+        font-size: clamp(1.6rem, 4vw, 2.15rem);
+        line-height: 1.35;
+        margin: 0 0 0.75rem;
+      }
+
+      .lede {
+        margin: 0;
+        max-width: 42rem;
+        color: var(--muted);
+      }
+
+      nav.toc {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem 0.85rem;
+        margin: 1.25rem 0 0;
+        font-size: 0.9rem;
+      }
+
+      h2 {
+        font-family: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif;
+        font-size: 1.35rem;
+        margin: 2.75rem 0 0.75rem;
+      }
+
+      h3 {
+        font-size: 1.02rem;
+        margin: 1.5rem 0 0.5rem;
+      }
+
+      p,
+      li {
+        font-size: 0.98rem;
+      }
+
+      figure.diagram {
+        margin: 1.25rem 0;
+      }
+
+      figure.diagram figcaption {
+        font-size: 0.82rem;
+        color: var(--muted);
+        margin-top: 0.55rem;
+      }
+
+      .stack {
+        border: 1px solid var(--line);
+        background: #fffdf8;
+        overflow: hidden;
+      }
+
+      .stack.fused .layer {
+        border-bottom: 1px dashed #c9c1ae;
+        padding: 0.7rem 1rem;
+        color: #f4efe6;
+        background: var(--next);
+      }
+
+      .stack.fused .layer:last-child {
+        border-bottom: 0;
+      }
+
+      .stack.fused .layer small {
+        display: block;
+        opacity: 0.72;
+        font-size: 0.78rem;
+      }
+
+      .stack.drawers {
+        display: grid;
+        gap: 0.45rem;
+        background: transparent;
+        border: 0;
+      }
+
+      .drawer {
+        border: 1px solid var(--line);
+        background: #fffdf8;
+        padding: 0.75rem 1rem;
+      }
+
+      .drawer.query {
+        border-left: 6px solid var(--query);
+      }
+
+      .drawer.router {
+        border-left: 6px solid var(--router);
+      }
+
+      .drawer.start {
+        border-left: 6px solid var(--start);
+      }
+
+      .drawer strong {
+        display: block;
+      }
+
+      .drawer span {
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+
+      .switch {
+        display: grid;
+        gap: 0.75rem;
+        margin: 1rem 0 0.25rem;
+      }
+
+      .switch-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+      }
+
+      .switch input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .switch label {
+        cursor: pointer;
+        border: 1px solid var(--line);
+        background: #fffdf8;
+        padding: 0.35rem 0.75rem;
+        font-size: 0.88rem;
+      }
+
+      .switch #view-next:checked ~ .switch-tabs label[for="view-next"],
+      .switch #view-ts:checked ~ .switch-tabs label[for="view-ts"] {
+        background: var(--ink);
+        color: var(--paper);
+        border-color: var(--ink);
+      }
+
+      .switch .panel-next,
+      .switch .panel-ts {
+        display: none;
+      }
+
+      .switch #view-next:checked ~ .panel-next,
+      .switch #view-ts:checked ~ .panel-ts {
+        display: block;
+      }
+
+      .grid-2 {
+        display: grid;
+        gap: 1rem;
+      }
+
+      @media (min-width: 740px) {
+        .grid-2 {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      .card {
+        border: 1px solid var(--line);
+        background: #fffdf8;
+        padding: 1rem;
+      }
+
+      .card.next {
+        background: var(--next-soft);
+      }
+
+      .card.query {
+        background: var(--query-soft);
+      }
+
+      .card.router {
+        background: var(--router-soft);
+      }
+
+      .card.start {
+        background: var(--start-soft);
+      }
+
+      .card h3 {
+        margin-top: 0;
+      }
+
+      .time {
+        display: grid;
+        gap: 0;
+        border: 1px solid var(--line);
+        background: #fffdf8;
+      }
+
+      .time div {
+        display: grid;
+        grid-template-columns: 7.5rem 1fr;
+        gap: 0.75rem;
+        padding: 0.7rem 1rem;
+        border-bottom: 1px solid var(--line);
+        font-size: 0.92rem;
+      }
+
+      .time div:last-child {
+        border-bottom: 0;
+      }
+
+      .time b {
+        font-size: 0.78rem;
+        letter-spacing: 0.04em;
+        color: var(--muted);
+        font-weight: 600;
+      }
+
+      code,
+      .path {
+        font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+        font-size: 0.86em;
+        background: #eae3d4;
+        padding: 0.05em 0.35em;
+      }
+
+      pre {
+        margin: 0.75rem 0 0;
+        padding: 0.85rem 1rem;
+        overflow: auto;
+        background: #1d1a16;
+        color: #f3eee4;
+        font-size: 0.82rem;
+        line-height: 1.55;
+      }
+
+      details.complaint {
+        border: 1px solid var(--line);
+        background: #fffdf8;
+        padding: 0.65rem 0.9rem;
+        margin: 0.45rem 0;
+      }
+
+      details.complaint summary {
+        cursor: pointer;
+        font-weight: 650;
+      }
+
+      details.complaint p {
+        margin: 0.6rem 0 0.2rem;
+        color: var(--muted);
+      }
+
+      .href {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.4rem;
+        margin: 0.65rem 0;
+        font-size: 0.92rem;
+      }
+
+      .href a.mock {
+        text-decoration: none;
+        border-bottom: 1px solid currentColor;
+        color: var(--next);
+      }
+
+      .href a.mock.bad::after {
+        content: " ← 文字列。存在しないパスでも通る";
+        color: var(--warn);
+        font-size: 0.78rem;
+        border: 0;
+      }
+
+      .href a.mock.good::after {
+        content: " ← to と params がルート木から来る";
+        color: var(--query);
+        font-size: 0.78rem;
+        border: 0;
+      }
+
+      ol.check li {
+        margin: 0.35rem 0;
+      }
+
+      footer {
+        margin-top: 2.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .note {
+        font-size: 0.88rem;
+        color: var(--muted);
+        border-left: 3px solid var(--line);
+        padding: 0.15rem 0 0.15rem 0.85rem;
+      }
+    </style>
+  </head>
+  <body>
+    <!--
+      このファイル自体が教材です。
+      ブラウザが最終的に読むのは HTML です。Next も TanStack も、違いは
+      「誰がこの HTML を組み立てるか」「キャッシュはどのタグの外にあるか」
+      「URL のどの部分が型を持つか」です。入れ子を、ライブラリの層として読んでください。
+    -->
+    <header class="hero">
+      <div class="wrap">
+        <p class="kicker">tracks/tanstack · 図解</p>
+        <h1>Next.js は一つの箱。<br />TanStack は引き出しが分かれている。</h1>
+        <p class="lede">
+          文句の本体は React ではありません。枠が仕事を引き受けるほど、キャッシュ・サーバー境界・URL の型が
+          <em>タグの外の暗黙</em>になります。TanStack が人気なのは、同じ仕事を
+          <code>queryKey</code> や <code>to</code> として残すからです。
+        </p>
+        <nav class="toc" aria-label="このページの節">
+          <a href="#layers">層</a>
+          <a href="#complaints">Next への不満</a>
+          <a href="#query">Query と fetch</a>
+          <a href="#router">Router と href</a>
+          <a href="#start">Start</a>
+          <a href="#check">確認</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section id="layers">
+        <h2>同じ画面でも、包み方が違う</h2>
+        <p>
+          下の切替は CSS だけです。JavaScript の枠の話をする前に、HTML の入れ子として見てください。
+        </p>
+
+        <div class="switch">
+          <input type="radio" name="view" id="view-next" checked />
+          <input type="radio" name="view" id="view-ts" />
+          <div class="switch-tabs">
+            <label for="view-next">Next.js の箱</label>
+            <label for="view-ts">TanStack の引き出し</label>
+          </div>
+
+          <div class="panel-next">
+            <figure class="diagram">
+              <div class="stack fused" role="img" aria-label="Next.js はルーティングもキャッシュも SSR も一つの枠">
+                <div class="layer">
+                  ルーティング（App Router のファイル名）
+                  <small>page.tsx / layout.tsx / loading.tsx …</small>
+                </div>
+                <div class="layer">
+                  SSR と Server Components
+                  <small>'use client' で初めてクライアントに降りる</small>
+                </div>
+                <div class="layer">
+                  fetch とキャッシュ
+                  <small>枠のデフォルト。Next 15 で「しない側」へ公式がひっくり返した</small>
+                </div>
+                <div class="layer">
+                  ビルド・画像・ホストとの距離
+                  <small>next build。最適化の厚さは載せ先で変わる</small>
+                </div>
+              </div>
+              <figcaption>
+                全部入りの勝ち: ファイルを置くと HTML が返る。負け: 境目が箱の内側で溶ける。
+              </figcaption>
+            </figure>
+          </div>
+
+          <div class="panel-ts">
+            <figure class="diagram">
+              <div class="stack drawers">
+                <div class="drawer query">
+                  <strong>TanStack Query</strong>
+                  <span>サーバー状態のクライアントキャッシュ。Next の中でも使う。乗り換えではない。</span>
+                </div>
+                <div class="drawer router">
+                  <strong>TanStack Router</strong>
+                  <span>型の通るルート木と search。App Router の一部の別解。</span>
+                </div>
+                <div class="drawer start">
+                  <strong>TanStack Start（RC）</strong>
+                  <span>Router を残したまま SSR と server function を足す。ここが Next と同層。</span>
+                </div>
+              </div>
+              <figcaption>
+                「TanStack に乗り換えた」と言われたら、まずどの引き出しかを聞いてください。
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section id="complaints">
+        <h2>Next に向けられる不満は、箱の内側</h2>
+        <p>
+          採用される理由と、文句の理由は同じ場所です。枠が HTML を組み立てる仕事を引き受けるからです。
+        </p>
+
+        <details class="complaint">
+          <summary>1. キャッシュが先に決まる</summary>
+          <p>
+            App Router 初期は <code>fetch</code> をキャッシュする側に寄せた。Data Cache、Full Route Cache、Router Cache が合成され、「なぜ古い HTML が出るか」が追いにくい。Next.js 15 は公式にデフォルトをキャッシュしない側へ変更した。デフォルトを変えるほど、暗黙は現場のコストだった、という記録です。
+          </p>
+        </details>
+        <details class="complaint">
+          <summary>2. サーバーとクライアントがファイルの属性になる</summary>
+          <p>
+            React Server Components ではデフォルトがサーバー、<code>'use client'</code> でクライアント。日付や関数は props で渡せない。これは React のモデルですが、Next はアプリの標準経路にしました。インタラクティブな画面ほど、「このファイルはどっちで HTML を出すか」が先に来ます。
+          </p>
+        </details>
+        <details class="complaint">
+          <summary>3. URL の型が後回し</summary>
+          <p>
+            下の「Router と href」を見てください。<code>href</code> は文字列、<code>searchParams</code> は自分で削る。フィルタが URL に乗るダッシュボードほど、ここがバグになります。
+          </p>
+        </details>
+        <details class="complaint">
+          <summary>4. 二つの書き方と、ホストとの距離</summary>
+          <p>
+            Pages Router と App Router が長く並んだ。コードは OSS で自前ホストもできる一方、開発の主導は Vercel にあり、画像などの厚さは載せ先で違います。陰謀ではなくインセンティブの話として出ます。
+          </p>
+        </details>
+      </section>
+
+      <section id="query">
+        <h2>Query と <code>fetch</code> は、効く時刻が違う</h2>
+        <p>
+          どちらも posts の JSON を取ります。だから競合に見えます。HTML がいつ確定するかが違います。
+        </p>
+        <div class="grid-2">
+          <article class="card next">
+            <h3>Next の Server Component</h3>
+            <p>この <strong>リクエスト</strong> の HTML をサーバーが組む。</p>
+            <pre>&lt;ul&gt;
+  &lt;li&gt;記事 A&lt;/li&gt;
+  &lt;li&gt;記事 B&lt;/li&gt;
+&lt;/ul&gt;</pre>
+            <p class="note">
+              Next 15 以降、<code>fetch</code> はデフォルトでキャッシュしません。長く持たせるなら枠のキャッシュ API を明示します。
+            </p>
+          </article>
+          <article class="card query">
+            <h3>TanStack Query</h3>
+            <p>ブラウザに残ったあと、同じキーのデータを共有・再取得する。</p>
+            <pre>queryKey: ['posts']
+staleTime: 60_000</pre>
+            <p class="note">
+              <code>staleTime</code> は「この HTML を何ミリ秒新鮮とみなすか」が名前として残ります。サイドバーの開閉は <code>useState</code> のままです。
+            </p>
+          </article>
+        </div>
+        <figure class="diagram">
+          <div class="time">
+            <div>
+              <b>最初の HTML</b>
+              <span>Next の <code>await fetch</code> が強い。SEO、秘密をサーバーに置く。</span>
+            </div>
+            <div>
+              <b>画面のあと</b>
+              <span>Query が強い。タブ復帰、一覧と詳細の共有、楽観的更新。</span>
+            </div>
+            <div>
+              <b>実務</b>
+              <span>両方使うのが多数派。Next を捨てる手順ではない。</span>
+            </div>
+          </div>
+          <figcaption>人気の入口は Start ではなく Query です。Next 公式も Client では Query や SWR を挙げます。</figcaption>
+        </figure>
+      </section>
+
+      <section id="router">
+        <h2>同じリンクでも、HTML の <code>href</code> の出どころが違う</h2>
+        <p>
+          ブラウザが見るのはどちらも <code>&lt;a href&gt;</code> です。違うのは、その文字列を誰が保証するかです。
+        </p>
+        <div class="grid-2">
+          <article class="card next">
+            <h3>Next.js</h3>
+            <div class="href">
+              <a class="mock bad" href="#router">/posts/123/edit</a>
+            </div>
+            <p>
+              ファイル名がルートです。<code>app/posts/[postId]/page.tsx</code>。Typed Routes でパスは寄せられます。search はまだ
+              <code>string | string[] | undefined</code> を自分で削ることが多いです。
+            </p>
+          </article>
+          <article class="card router">
+            <h3>TanStack Router</h3>
+            <div class="href">
+              <a class="mock good" href="#router">/posts/$postId/edit</a>
+            </div>
+            <p>
+              ファイルから <strong>route tree</strong> が生成され、<code>to</code> と <code>params</code> が型を持ちます。<code>validateSearch</code> で
+              <code>?page=2</code> もルートの契約になります。
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="start">
+        <h2>Start は、引き出しを足す枠</h2>
+        <p>
+          Router までなら Vite の CSR でも足ります。足りないのは、最初のドキュメントをサーバーが組むことと、サーバーだけの秘密です。Start は Router のタグを置き換えません。SSR と
+          <code>createServerFn</code> を被せます。執筆時点は Release Candidate です。
+        </p>
+        <article class="card start">
+          <h3>層を戻す</h3>
+          <ul>
+            <li><strong>Query だけ</strong> — Next のままが普通。乗り換えではない。</li>
+            <li><strong>Router</strong> — URL と search を契約にしたい。Vite SPA ならここで足りることがある。</li>
+            <li><strong>Start</strong> — その Router に SSR が要るとき。Next と同層の選択。</li>
+          </ul>
+          <p class="note">
+            コンテンツと事例と採用が速度になるなら、箱（Next）は今も合理です。同じセッションで URL とキャッシュを細かく動かすなら、引き出しが効きます。
+          </p>
+        </article>
+      </section>
+
+      <section id="check">
+        <h2>確認</h2>
+        <p>自分の言葉で答えてください。答えはこのページの上にあります。</p>
+        <ol class="check">
+          <li>「TanStack に乗り換えた」と言われたら、まずどの引き出しを聞き返すか。</li>
+          <li>Next 15 が <code>fetch</code> のデフォルトキャッシュをやめたことは、どの不満への反応か。</li>
+          <li>最初の HTML と、画面のあとの再取得で、Query と Server <code>fetch</code> のどちらが主か。</li>
+        </ol>
+      </section>
+
+      <footer>
+        <p>
+          文章のレッスン:
+          <a href="./01-why-tanstack.md">01 なぜ</a> ·
+          <a href="./02-query-and-server-state.md">02 Query</a> ·
+          <a href="./03-router-and-url.md">03 Router</a> ·
+          <a href="./04-start-as-framework.md">04 Start</a>
+        </p>
+        <p>
+          公式:
+          <a href="https://tanstack.com/query/latest">Query</a> ·
+          <a href="https://tanstack.com/router/latest">Router</a> ·
+          <a href="https://tanstack.com/start/latest">Start</a> ·
+          <a href="https://nextjs.org/blog/next-15">Next.js 15 Caching</a> ·
+          <a href="https://nextjs.org/docs/app/getting-started/fetching-data">Next fetching</a>
+        </p>
+        <p>GitHub 上ではこの HTML はソース表示になります。クローンしたファイルをブラウザで開いてください。</p>
+      </footer>
+    </main>
+  </body>
+</html>

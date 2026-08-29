@@ -44,10 +44,17 @@ Vercel / Cloudflare / Docker 上の自分のサーバー         ← 動かす�
 - **oRPC と Hono**  
   Hono は「どの URL のどの HTTP メソッドか」を配線する。oRPC は「サーバーの関数を、クライアントから型付きで呼ぶ」契約。Hono に oRPC のハンドラを載せる、という組み合わせが自然。
 
+- **TanStack Query と Next.js**  
+  Query はサーバー状態のクライアントキャッシュ。Next はメタフレームワーク。同じアプリで両方使うのが普通で、乗り換えではない。
+
+- **TanStack Start と Next.js**  
+  ここがメタフレームワーク同士。Query や Router とは層が違う。[TanStack トラック](../tanstack/) で Next への不満の中身と切り分ける。
+
 ### このリポジトリでの位置
 
 | このあと学ぶもの | 地図上の層 |
 | --- | --- |
+| TanStack Query / Router / Start | データ取得・ルーティング・メタフレームワーク（Next と比較する） |
 | Hono | ランタイムの上で HTTP を扱う |
 | oRPC | HTTP の上で API の型を端から端まで通す |
 | ネットワーク | ランタイムより下。パケットと HTTP そのもの |
@@ -60,6 +67,7 @@ Vercel / Cloudflare / Docker 上の自分のサーバー         ← 動かす�
 
 - Vite をやめても React コンポーネントの書き方が残ることがある。それはなぜか
 - Hono は React の競合か。そう思わない理由を一層の言葉で言え
+- TanStack Query を入れることは、Next.js をやめることか
 - 新しい「フルスタックフレームワーク」が出たとき、最初に確認する層はどれか
 
 ## 次へ
